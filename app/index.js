@@ -30,10 +30,16 @@ BoomerangGenerator.prototype.askFor = function askFor() {
       message: 'What is your GDG Chapter Google+ ID?'
   },{
       name: 'googleAPIKey',
-      message: 'What is your Google API Key?\n(https://code.google.com/apis/console)'
+      message: 'What is your Google+ API Key?\n(https://code.google.com/apis/console)'
   },{
       name: 'picasaWebID',
       message: 'What is your Picasa Web Album ID?\n(Must belong to Chapter Google+ ID)'
+      name: 'meetupURLName',
+      message: "What is your Meetup group URL name\n(after http://meetup.com/ on your Meetup group's home page)?"
+  },{
+      name: 'meetupAPIKey',
+      message: 'What is your Meetp API Key?\n(http://www.meetup.com/meetup_api/key/)'
+  },{
   }];
 
   this.prompt(prompts, function (props) {
@@ -41,6 +47,8 @@ BoomerangGenerator.prototype.askFor = function askFor() {
       this.chapterID = props.chapterID;
       this.googleAPIKey = props.googleAPIKey;
       this.picasaWebID = props.picasaWebID;
+      this.meetupURLName = props.meetupURLName;
+      this.meetupAPIKey = props.meetupAPIKey;
 
       cb();
   }.bind(this));

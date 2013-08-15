@@ -15,12 +15,14 @@ boomerang.factory('Config',function(){
         'id'            : '<%= chapterID %>',
         'google_api'    : '<%= googleAPIKey %>',
         'pwa_id'        : '<%= picasaWebID %>', //picasa web album id, must belong to google+ id above
+	'meetup_url_name' : '<%= meetupURLName %>',
+	'meetup_api_key' : '<%= meetupAPIKey %>',
         'cover' : {
             title : 'Cover Title',
-            subtitle : 'Cover message. Change this is boomerang.js',
+            subtitle : 'Cover message. Change this in boomerang.js',
             button : {
                 text : 'Call to action',
-                url : 'https://developers.google.com/groups'
+                url : 'https://developers.google.com/groups/chapter/<%=chapterID%>'
             }
         }
     }
@@ -142,6 +144,9 @@ boomerang.controller("EventsControl", function( $scope, $http, Config ) {
     $scope.$parent.activeTab = "events";
 
     $scope.events = {past:[] ,future:[]};
+    // from https://developers.google.com/events/feed/json?group=Config.id&start=0
+    // e.g. https://developers.google.com/events/feed/json?group=104210617698082698436&start=0
+    // but no JSONP support, alternate format is RSS
     $http.get("http://gdgfresno.com/gdgfeed.php?id="+Config.id).
         success(function(data){
             var now = new Date();
@@ -160,6 +165,34 @@ boomerang.controller("EventsControl", function( $scope, $http, Config ) {
             $scope.loading = false;
         });
 
+});
+
+boomerang.controller("MeetupControl", function( $scope, $http, Config ) {
+    $scope.loading = true;
+    $scope.$parent.activeTab = "events";
+
+    $scope.events = {past:[] ,future:[]};
+    promiseA = $http.get("https://api.meetup.com/2/events?status=past&group_urlname="+Config.meetup_url_name+"key="+Config.meetup_api_key).
+        success(function(data){
+            for(var i=data.length-1;i>=0;i--){
+                var start = new Date(data[i].start);
+                data[i].start = start;
+                data[i].end = new Date(data[i].end);
+                $scope.events.past.push(data[i]);
+            }
+        });
+
+    promiseB = $http.get("https://api.meetup.com/2/events?status=upcoming&group_urlname="+Config.meetup_url_name+"key="+Config.meetup_api_key).
+        success(function(data){
+            for(var i=data.length-1;i>=0;i--){
+                var start = new Date(data[i].start);
+                data[i].start = start;
+                data[i].end = new Date(data[i].end);
+                $scope.events.future.push(data[i]);
+            }
+        });
+
+    $q.all([promiseA, promiseB]).then($scope.loading = false);
 });
 
 boomerang.controller("PhotosControl", function( $scope, $http, Config ) {

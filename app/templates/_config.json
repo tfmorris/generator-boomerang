@@ -1,3 +1,8 @@
 {
   "name": "<%= chapterName %>"
+  "id": "<%= chapterID %>",
+  "google_api": "<%= googleAPIKey %>",
+  "pwa_id": "<%= picasaWebID %>",
+  "meetup_url_name" : "<%= meetupURLName %>",
+  "meetup_api_key" : "<%= meetupAPIKey %>",
 }
